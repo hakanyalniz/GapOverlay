@@ -27,6 +27,19 @@
             </Rectangle.OpacityMask>
         </Rectangle>
 
-
+                <!-- Debug helper TextBox -->
+        <TextBox x:Name="DebugTextBox"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Bottom"
+                 Width="400"
+                 Height="100"
+                 Margin="10"
+                 TextWrapping="Wrap"
+                 AcceptsReturn="True"
+                 IsReadOnly="True"
+                 VerticalScrollBarVisibility="Auto"
+                 FontSize="12"
+                 Background="Black"
+                 Foreground="Lime"/>
     </Grid>
 </Window>

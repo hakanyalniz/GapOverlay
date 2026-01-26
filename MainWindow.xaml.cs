@@ -25,6 +25,9 @@ public partial class MainWindow : Window
         public int X;
         public int Y;
     }
+     // The size of the width must be written here, for example 0.49 - 0.51 = 0.02 / 2
+    private double halfGap = 0.01;
+    private double fade = 0.01;
 
     // Calling the below function in user32.dll will give us mouse coordinates
     // then assign them into POINT
@@ -37,8 +40,11 @@ public partial class MainWindow : Window
         InitializeComponent();
         // After the above is initialized and window is shown, run below
         Loaded += MainWindow_Loaded;
+        // Subscribe to key down event
+        // this.KeyDown += MainWindow_KeyDown;
     }
 
+    // The timer loop that calls MouseTimer tick on interval
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
         mouseTimer = new DispatcherTimer
@@ -49,6 +55,7 @@ public partial class MainWindow : Window
         mouseTimer.Start();
     }
 
+    // Each interval, it decides new position based on mouse coordinates
     private void MouseTimer_Tick(object? sender, EventArgs e)
     {
         GetCursorPos(out POINT p);
@@ -65,13 +72,38 @@ public partial class MainWindow : Window
         // where left and right both in TOTAL make the gap width
         // when we subtract in one side and add in another, they in total make the total gap width
 
-        // The size of the width must be written here, for example 0.49 - 0.51 = 0.02 / 2
-        double halfGap = 0.01;
-        double fade = 0.01;
+        // private double halfGap = 0.01;
+        // private double fade = 0.01;
+        LogDebug($"Halfgap: {halfGap}");
         DoorMask.GradientStops[1].Offset = gapCenter - halfGap - fade; // 0.48
         DoorMask.GradientStops[2].Offset = gapCenter - halfGap;        // 0.49
         DoorMask.GradientStops[3].Offset = gapCenter + halfGap;        // 0.51
         DoorMask.GradientStops[4].Offset = gapCenter + halfGap + fade; // 0.52
+    }
+
+    // When key is pressed, run this
+    // private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+    // {
+    //     if (e.Key == Key.Left)
+    //     {
+    //         halfGap += 0.01;
+    //         fade = halfGap + 0.01;
+    //     }
+    //     else if (e.Key == Key.Right)
+    //     {
+    //         halfGap -= 0.01;
+    //         fade = halfGap - 0.01;
+    //     }
+
+    //     if (e.Key == Key.Escape)
+    //     {
+    //         Close(); 
+    //     }
+    // }
+    private void LogDebug(string message)
+    {
+        DebugTextBox.AppendText($"{DateTime.Now:HH:mm:ss}: {message}\n");
+        DebugTextBox.ScrollToEnd(); // always scroll to show the latest message
     }
 
 }
