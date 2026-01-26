@@ -41,7 +41,11 @@ public partial class MainWindow : Window
         // After the above is initialized and window is shown, run below
         Loaded += MainWindow_Loaded;
         // Subscribe to key down event
-        // this.KeyDown += MainWindow_KeyDown;
+        this.KeyDown += MainWindow_KeyDown;
+
+        #if !DEBUG
+            DebugTextBox.Visibility = Visibility.Collapsed; // hide in Release
+        #endif
     }
 
     // The timer loop that calls MouseTimer tick on interval
@@ -74,7 +78,6 @@ public partial class MainWindow : Window
 
         // private double halfGap = 0.01;
         // private double fade = 0.01;
-        LogDebug($"Halfgap: {halfGap}");
         DoorMask.GradientStops[1].Offset = gapCenter - halfGap - fade; // 0.48
         DoorMask.GradientStops[2].Offset = gapCenter - halfGap;        // 0.49
         DoorMask.GradientStops[3].Offset = gapCenter + halfGap;        // 0.51
@@ -82,24 +85,48 @@ public partial class MainWindow : Window
     }
 
     // When key is pressed, run this
-    // private void MainWindow_KeyDown(object sender, KeyEventArgs e)
-    // {
-    //     if (e.Key == Key.Left)
-    //     {
-    //         halfGap += 0.01;
-    //         fade = halfGap + 0.01;
-    //     }
-    //     else if (e.Key == Key.Right)
-    //     {
-    //         halfGap -= 0.01;
-    //         fade = halfGap - 0.01;
-    //     }
+    private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+    {
 
-    //     if (e.Key == Key.Escape)
-    //     {
-    //         Close(); 
-    //     }
-    // }
+        #if DEBUG
+            LogDebug($"halfGap = {halfGap}, fade = {fade}");
+        #endif
+        if (e.Key == Key.Left)
+        {
+            if (halfGap >= 0.45) // bugs out if halfGap is any higher
+            {
+                halfGap = 0.45;
+            }
+
+            // Ensures that halfGap is 0, while fade is 0.01, 
+            // then next click halfGap is 0.01
+            // This allows it to start with tiny gap, since tiny gap is halfGap 0, fade 0.01
+            halfGap += fade == 0 ? 0 : 0.01;
+            fade =  0.01;
+        }
+        else if (e.Key == Key.Right)
+        {
+            // Allows for tiny gap while decreasing
+            if (halfGap == 0 && fade == 0.01)
+            {
+                fade = 0;
+            }
+
+            halfGap -= 0.01;
+            // If halfGap is negative value, then equal 0, or else leave it be
+            halfGap = halfGap <= 0 ? 0 : halfGap;
+        }
+
+        if (e.Key == Key.Escape)
+        {
+            Close(); 
+        }
+        #if DEBUG
+            LogDebug($"AFTER // halfGap = {halfGap}, fade = {fade}");
+        #endif
+  
+    }
+
     private void LogDebug(string message)
     {
         DebugTextBox.AppendText($"{DateTime.Now:HH:mm:ss}: {message}\n");
