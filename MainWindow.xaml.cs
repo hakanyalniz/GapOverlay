@@ -56,12 +56,22 @@ public partial class MainWindow : Window
         double centerX = ActualWidth / 2;
         double delta = (p.X - centerX) / ActualWidth;
 
+        // The second integer value can be changed to change the movement range
+        // of the gap 
         double gapCenter = 0.5 + delta * 0.1;
 
-        DoorMask.GradientStops[1].Offset = gapCenter - 0.05;
-        DoorMask.GradientStops[2].Offset = gapCenter - 0.02;
-        DoorMask.GradientStops[3].Offset = gapCenter + 0.02;
-        DoorMask.GradientStops[4].Offset = gapCenter + 0.05;
+        // Change the value of the integers here and at MainWindow.xaml to change the gap width
+        // The halfGap must be half of the normal gap width, since it is divided in half
+        // where left and right both in TOTAL make the gap width
+        // when we subtract in one side and add in another, they in total make the total gap width
+
+        // The size of the width must be written here, for example 0.49 - 0.51 = 0.02 / 2
+        double halfGap = 0.01;
+        double fade = 0.01;
+        DoorMask.GradientStops[1].Offset = gapCenter - halfGap - fade; // 0.48
+        DoorMask.GradientStops[2].Offset = gapCenter - halfGap;        // 0.49
+        DoorMask.GradientStops[3].Offset = gapCenter + halfGap;        // 0.51
+        DoorMask.GradientStops[4].Offset = gapCenter + halfGap + fade; // 0.52
     }
 
 }
