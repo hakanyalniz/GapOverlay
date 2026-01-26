@@ -1,0 +1,17 @@
+# Build outputs
+bin/
+obj/
+publish/
+
+# User-specific files
+*.user
+*.suo
+*.pdb
+*.log
+
+# Visual Studio / VS Code folders
+.vs/
+.vscode/
+
+# Others
+*.dbmdl
